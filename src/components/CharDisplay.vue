@@ -6,6 +6,7 @@
       class="vert-contain">
       <div 
         v-bind:id="'b' + i"
+        :class="theme"
         class="box"
         ><h2>
           {{ item }}
@@ -18,7 +19,7 @@
 <script>
 
 export default {
-  props: ['selectedCharGroup'],
+  props: ['theme','selectedCharGroup'],
   data: () => ({
     charArr: ['','','','','0','1','2','3','4'], 
     lastSpace: false,
@@ -33,11 +34,9 @@ export default {
       else if (this.selectedCharGroup === 4) { this.char += 20 }
       else if (this.selectedCharGroup === 5) { this.char += 10 }
       this.char = this.char.toString()
-      console.log(this.char)
     },
     randomSpace() {
       let space = Math.random()
-      console.log(space)
       if (space <= 0.15 && this.lastSpace === false) {
         this.char = ' '
         this.lastSpace = true
@@ -81,14 +80,12 @@ export default {
       if (this.char === '39') this.char = `<`
       if (this.char === '40') this.char = '>'
       if (this.char === '41') this.char = '?'
-      console.log(`selectedCharGroup: ${this.selectedCharGroup}`)
       this.randomSpace()
       this.charArr.shift()
       this.charArr.push(this.char)
     },
     checkMatch(event) {
       if (event.key === this.charArr[4]) {
-        console.log('match!')
         this.nextChar()
       }
     },
@@ -119,7 +116,6 @@ export default {
 }
 
 .box {
-  background-color:darkgrey;
   box-shadow: 0px 1px 4px rgba(0, 0, 0, .1);
   height: 100px;
   width: 100px;
@@ -127,13 +123,8 @@ export default {
   padding-top: 5px;
   font-size: 40px;
   text-align: center;
-  
-  &#b0, &#b1, &#b2, &#b3 {
-    color: grey;
-  }
 
   &#b4 {
-    background-color: snow;
     height: 120px;
     width: 120px;
     font-size: 48px;
