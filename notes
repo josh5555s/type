@@ -1,6 +1,11 @@
-dynamic color sass
+don't allow two of the same char in a row.
 
-once dynamic colors are set up, create theme pallet
+create stats for top 5 slowest chars with key, value, and top 5 missed chars with key
+
+create all time high wpm that is saved in local storage
+https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
+
+add new good colors
 
 create options menu that rolls in/out from the top on esc or click
 

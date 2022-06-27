@@ -12,17 +12,19 @@
 
 <script>
 export default {
-  props: ['theme', 'selectedCharGroup'],
+  props: ['theme', 'currentSet'],
+  emits: ['char-archive'],
   data: () => ({
     displayArr: [],
     numbersArr: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
     numberSymbolsArr: [')', '!', '@', '#', '$', '%', '^', '&', '*', '('],
     otherSymbolsNoShiftArr: ['.', '`', '-', '=', '[', ']', '\\', ';', `'`, ',', '/'],
     otherSymbolsShiftArr: ['>', '~', '_', '+', '{', '}', '|', ':', '"', '<', '?'],
-    charArchive: [],
     lastSpace: false,
     char: '',
     typingStarted: false,
+    timeBegins: 0,
+    charErrorCount: 0,
   }),
   computed: {
     allOtherSymbolsArr() {
@@ -42,31 +44,31 @@ export default {
       [1, 2, 3, 4, 5].forEach(() => {
         this.char = this.getChar();
         this.displayArr.push(this.char);
-        this.charArchive.push(this.displayArr.shift());
+        this.displayArr.shift();
       });
     },
     getChar() {
-      if (this.selectedCharGroup === 0) {
+      if (this.currentSet === 0) {
         return this.numbersArr[Math.floor(Math.random() * this.numbersArr.length)];
-      } else if (this.selectedCharGroup === 1) {
+      } else if (this.currentSet === 1) {
         return this.numberSymbolsArr[
           Math.floor(Math.random() * this.numberSymbolsArr.length)
         ];
-      } else if (this.selectedCharGroup === 2) {
+      } else if (this.currentSet === 2) {
         return this.otherSymbolsNoShiftArr[
           Math.floor(Math.random() * this.otherSymbolsNoShiftArr.length)
         ];
-      } else if (this.selectedCharGroup === 3) {
+      } else if (this.currentSet === 3) {
         return this.otherSymbolsShiftArr[
           Math.floor(Math.random() * this.otherSymbolsShiftArr.length)
         ];
-      } else if (this.selectedCharGroup === 4) {
+      } else if (this.currentSet === 4) {
         return this.allOtherSymbolsArr[
           Math.floor(Math.random() * this.allOtherSymbolsArr.length)
         ];
-      } else if (this.selectedCharGroup === 5) {
+      } else if (this.currentSet === 5) {
         return this.allSymbolsArr[Math.floor(Math.random() * this.allSymbolsArr.length)];
-      } else if (this.selectedCharGroup === 6) {
+      } else if (this.currentSet === 6) {
         return this.allSymbolsAndNumbersArr[
           Math.floor(Math.random() * this.allSymbolsAndNumbersArr.length)
         ];
@@ -74,7 +76,7 @@ export default {
     },
     randomSpace() {
       let space = Math.random();
-      if (space <= 0.15 && this.lastSpace === false) {
+      if (space <= 0.18 && this.lastSpace === false) {
         this.char = ' ';
         this.lastSpace = true;
       } else {
@@ -82,30 +84,31 @@ export default {
       }
     },
     checkMatch(event) {
+      const menuChars = ['m', 's', 'c', 'n'];
+      const isMenuKey = menuChars.includes(event.key);
       if (event.key === this.displayArr[4]) {
-        this.keyWasCorrect();
+        this.keyWasCorrect(event.key);
         this.typingStarted = true;
-      } else {
-        this.keyWasNotCorrect();
+        this.timeBegins = Date.now();
+      } else if (!isMenuKey) {
+        this.charErrorCount++;
       }
     },
-    keyWasCorrect() {
-      this.char = this.getChar();
+    keyWasCorrect(eventKey) {
+      this.$emit('char-archive', {
+        char: eventKey,
+        charSet: this.currentSet,
+        errorCount: this.charErrorCount,
+        time: Date.now() - this.timeBegins,
+      });
+      this.charErrorCount = 0;
+      this.displayArr.shift(), (this.char = this.getChar());
       this.randomSpace();
-      this.archiveCharStats();
       this.displayArr.push(this.char);
-    },
-    keyWasNotCorrect() {
-      // this.archiveCharStats();
-      // this.displayArr.push(this.char);
-    },
-    archiveCharStats() {
-      this.charArchive.push(this.displayArr.shift());
-      console.log('charArchive', this.charArchive);
     },
   },
   watch: {
-    selectedCharGroup() {
+    currentSet() {
       this.setDisplayArr();
     },
   },

@@ -8,9 +8,7 @@
       <h1>Press (s) to toggle stats display</h1>
       <h1>Press (c) to cycle through colors</h1>
       <h1>Press (n) to move to the next character set</h1>
-      <h1>
-        Current Character Set: {{ charGroups[selectedCharGroup].toUpperCase() }}
-      </h1>
+      <h1>Current Character Set: {{ charGroups[currentSet].toUpperCase() }}</h1>
     </template>
   </BaseCard>
 </template>
@@ -22,8 +20,8 @@ export default {
   components: {
     BaseCard,
   },
-  props: ['selectedCharGroup', 'menuActive', 'charGroups'],
-  emits: ['selectedCharGroup'],
+  props: ['currentSet', 'menuActive', 'charGroups'],
+  emits: ['currentSet'],
   data: () => ({}),
   methods: {
     toggleMenu() {

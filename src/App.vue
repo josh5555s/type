@@ -6,7 +6,7 @@
           :class="theme"
           :theme="theme"
           :menuActive="menuActive"
-          :selectedCharGroup="selectedCharGroup"
+          :currentSet="currentSet"
           :charGroups="charGroups"
           @toggle-menu="toggleMenu"
           @toggle-stats="toggleStats"
@@ -16,9 +16,15 @@
         <char-display
           :theme="theme"
           :charGroups="charGroups"
-          :selectedCharGroup="selectedCharGroup"
+          :currentSet="currentSet"
+          @char-archive="updateCharArchive"
         />
-        <Stats-Display v-if="statsActive" />
+        <Stats-Display
+          v-if="statsActive"
+          :charArchive="charArchive"
+          :charGroups="charGroups"
+          :currentSet="currentSet"
+        />
       </div>
     </div>
   </v-app>
@@ -40,16 +46,10 @@ export default {
 
   data: () => ({
     themeIndex: 0,
-    themes: [
-      'theme-green',
-      'theme-blue',
-      'theme-lime',
-      'theme-amber',
-      'theme-gray',
-    ],
-    selectedCharGroup: 0,
+    themes: ['theme-green', 'theme-blue', 'theme-lime', 'theme-amber', 'theme-gray'],
+    currentSet: 0,
     menuActive: true,
-    statsActive: true,
+    statsActive: false,
     charGroups: [
       'numbers',
       'number symbols',
@@ -59,6 +59,7 @@ export default {
       'all symbols',
       'all symbols and numbers',
     ],
+    charArchive: [],
   }),
   computed: {
     theme() {
@@ -73,21 +74,20 @@ export default {
       this.statsActive = !this.statsActive;
     },
     switchCharSet() {
-      this.selectedCharGroup++;
-      if (this.selectedCharGroup === this.charGroups.length) {
-        this.selectedCharGroup = 0;
+      this.currentSet++;
+      if (this.currentSet === this.charGroups.length) {
+        this.currentSet = 0;
       }
     },
     cycleColor() {
       this.themeIndex++;
       if (this.themeIndex === this.themes.length) this.themeIndex = 0;
     },
-  },
-  watch: {
-    theme() {
-      console.log(this.theme);
+    updateCharArchive(charObj) {
+      this.charArchive.push(charObj);
     },
   },
+  watch: {},
 };
 </script>
 
